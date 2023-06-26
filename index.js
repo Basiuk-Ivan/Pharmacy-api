@@ -16,6 +16,7 @@ import {
 import { backetDefaultPath, backetRouter } from './src/basket/BacketRouter.js';
 import { orderDefaultPath, orderRouter } from './src/orders/OrdersRouter.js';
 import { reviewDefaultPath, reviewRouter } from './src/review/ReviewRouter.js';
+import { resolve } from 'path';
 
 export const app = express();
 
@@ -29,3 +30,9 @@ app.use(favoriteDefaultPath, favoriteRouter);
 app.use(backetDefaultPath, backetRouter);
 app.use(orderDefaultPath, orderRouter);
 app.use(reviewDefaultPath, reviewRouter);
+app.use(express.static(resolve(process.cwd(), 'static')));
+
+app.get('*', (req, res) => {
+  res.sendFile(resolve(process.cwd(), 'static', 'index.html'));
+  // завдяки цьому при перезавантажені сторінки ми повертаємось на ту самі сторінку
+});
