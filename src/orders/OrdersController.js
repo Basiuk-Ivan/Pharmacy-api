@@ -13,6 +13,8 @@ export const createOrder = async (req, res) => {
     });
     const { email, products, totalPrice } = createdOrder;
     await sendMailOrder({ products, email, totalPrice });
+    console.log(createdOrder);
+
     res.json(createdOrder);
   } catch (e) {
     res.status(500).json(e.message);
