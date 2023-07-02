@@ -2,14 +2,14 @@ import nodemailer from 'nodemailer';
 import HTML_TEMPLATE from './mailTemplate.js';
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.ukr.net',
-  port: 465,
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
   secure: true,
   auth: {
-    user: 'pharmacy_shop@ukr.net',
-    pass: '73tOm3Qhbe71AhIn',
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
   },
-  tls: { rejectUnauthorized: false },
+  // tls: { rejectUnauthorized: false },
 });
 
 export const sendMailOrder = async ({ products, email, totalPrice }) => {
