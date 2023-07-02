@@ -2,12 +2,12 @@ import nodemailer from 'nodemailer';
 import HTML_TEMPLATE from './mailTemplate.js';
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
+  host: 'smtp.ukr.net',
+  port: 2525,
   secure: true,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
+    user: 'pharmacy_shop@ukr.net',
+    pass: '73tOm3Qhbe71AhIn',
   },
   // tls: { rejectUnauthorized: false },
 });
