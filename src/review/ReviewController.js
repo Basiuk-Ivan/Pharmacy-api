@@ -1,70 +1,70 @@
-import ReviewDB from "./ReviewModel.js";
-import mongoose from "mongoose";
+import { ReviewService } from './ReviewService.js';
 
 export const createReview = async (req, res) => {
-    try {
-        console.log(req.body);
-        const createdReview = await ReviewDB.create(req.body);
-        console.log(createdReview);
-        res.json(createdReview);
-    } catch (e) {
-        res.status(500).json(e.message);
-    }
+  try {
+    const createdReview = await ReviewService.createReview(req.body);
+    res.json(createdReview);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
 };
 
 export const getReview = async (req, res) => {
-       try {
-        let Reviews = [];
-        const {product,user} = req.query;
-console.log(product);
-        if (!!product) {
-            const objectIdProd = new mongoose.Types.ObjectId(product);
-            Reviews = await ReviewDB.find({ product : objectIdProd });
-        } else {
-            if (!!user) {
-                const objectIdUser = new mongoose.Types.ObjectId(user);
-                Reviews = await ReviewDB.find({ user : objectIdUser });
-            }
-         else {
-               Reviews = await ReviewDB.find();
-           }}
-
-        return res.json(Reviews.reverse());
-    } catch (e) {
-        res.status(500).json(e.message);
+  try {
+    const { product, user, respondId } = req.query;
+    if (!!respondId) {
+      const respond = await ReviewService.getReviewById(respondId);
+      return res.json(respond);
+    } else if (!!product) {
+      const reviews = await ReviewService.getReviewsByProduct(product);
+      return res.json(reviews);
+    } else if (!!user) {
+      const reviews = await ReviewService.getReviewsByUser(user);
+      return res.json(reviews);
+    } else {
+      const reviews = await ReviewService.getAllReviews();
+      return res.json(reviews);
     }
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
 };
 
 export const updateReview = async (req, res) => {
-    try {
-        if (!req.body.id) {
-            throw new Error('ID не знайдено');
-        }
-        const updatedReview = await ReviewDB.findByIdAndUpdate(req.body.id, req.body, { new: true });
-        return res.json(updatedReview);
-    } catch (e) {
-        res.status(500).json(e.message);
+  try {
+    if (!req.body.id) {
+      throw new Error('ID не знайдено');
     }
+    const updatedReview = await ReviewService.updateReview(
+      req.body.id,
+      req.body
+    );
+    return res.json(updatedReview);
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
 };
+
 export const deleteReview = async (req, res) => {
-    try {
-        if (!req.params.id) {
-            throw new Error('ID не знайдено');
-        }
-        const Review = await ReviewDB.findByIdAndDelete(req.params.id);
-        if (!Review) {
-            res.status(404).json('ID не знайдено чи вже видалено');
-        } else {
-            return res.json(Review);
-        }
-    } catch (e) {
-        res.status(500).json(e.message);
+
+  try {
+    if (!req.params.id) {
+      throw new Error('ID не знайдено');
     }
+    const deletedReview = await ReviewService.deleteReview(req.params.id);
+    if (!deletedReview) {
+      res.status(404).json('ID не знайдено чи вже видалено');
+    } else {
+      return res.json(deletedReview);
+    }
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
 };
 
 export const ReviewController = {
-    createReview,
-    getReview,
-    updateReview,
-    deleteReview,
+  createReview,
+  getReview,
+  updateReview,
+  deleteReview,
 };
