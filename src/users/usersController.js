@@ -1,11 +1,14 @@
+import bcrypt from 'bcrypt';
+
 import {
   getUserService,
   getUserByIDService,
-  passwordUserService,
+  forgotPasswordUserService,
   updateUserService,
   createUserService,
   loginUserService,
 } from './UserService.js';
+import { sendMailRegistration } from '../utils/mail.js';
 
 export const getUser = async (req, res) => {
   try {
@@ -25,9 +28,9 @@ export const getUserByID = async (req, res) => {
   }
 };
 
-export const passwordUser = async (req, res) => {
+export const forgotPasswordUser = async (req, res) => {
   try {
-    await passwordUserService(req.query);
+    await forgotPasswordUserService(req.query);
     res.json('Password updated successfully');
   } catch (error) {
     res.status(500).json(error.message);
@@ -37,7 +40,7 @@ export const passwordUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const passwordNotHash = req.body.password;
   try {
-    if (req.body?.password) {
+    if (req.body.password) {
       req.body.password = await bcrypt.hash(req.body.password, 4);
     }
 
@@ -91,7 +94,7 @@ export const loginUser = async (req, res) => {
 export const UserController = {
   getUser,
   getUserByID,
-  passwordUser,
+  forgotPasswordUser,
   updateUser,
   createUser,
   loginUser,

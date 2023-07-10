@@ -8,7 +8,7 @@ import {
   getUserById,
   updateUserById,
   createUser,
-  updateUserPassword,
+  forgotUpdateUserPassword,
 } from './UserDataAccess.js';
 
 export const getUserService = async query => {
@@ -29,7 +29,7 @@ export const getUserByIDService = async userId => {
   }
 };
 
-export const passwordUserService = async query => {
+export const forgotPasswordUserService = async query => {
   try {
     const user = await UserDB.findOne(query);
     if (!user) {
@@ -37,7 +37,10 @@ export const passwordUserService = async query => {
     } else {
       const passwordNotHash = generateRandomString(8);
       const passwordHash = await bcrypt.hash(passwordNotHash, 4);
-      const updatedUser = await updateUserPassword(user.email, passwordHash);
+      const updatedUser = await forgotUpdateUserPassword(
+        user.email,
+        passwordHash
+      );
       const { password, ...userData } = updatedUser._doc;
       const { email, firstName, secondName } = userData;
       await sendMailRegistration({
@@ -55,21 +58,8 @@ export const passwordUserService = async query => {
 
 export const updateUserService = async (userId, updatedFields) => {
   try {
-    if (updatedFields?.password) {
-      updatedFields.password = await bcrypt.hash(updatedFields.password, 4);
-    }
     const updatedUser = await updateUserById(userId, updatedFields);
 
-    if (updatedFields.password) {
-      const { password, ...userData } = updatedUser._doc;
-      const { email, firstName, secondName } = userData;
-      await sendMailRegistration({
-        email,
-        firstName,
-        secondName,
-        password: updatedFields.password,
-      });
-    }
     return updatedUser;
   } catch (error) {
     throw new Error(error.message);
