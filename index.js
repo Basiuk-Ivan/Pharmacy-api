@@ -38,7 +38,12 @@ app.use(responseDefaultPath, responseRouter);
 
 app.use(express.static(resolve(process.cwd(), 'static')));
 
-app.get('/*', (req, res) => {
+app.get('*', (req, res) => {
+  res.sendFile(resolve(process.cwd(), 'static', 'index.html'));
+  // завдяки цьому при перезавантажені сторінки ми повертаємось на ту самі сторінку
+});
+
+app.get('*/*', (req, res) => {
   res.sendFile(resolve(process.cwd(), 'static', 'index.html'));
   // завдяки цьому при перезавантажені сторінки ми повертаємось на ту самі сторінку
 });
