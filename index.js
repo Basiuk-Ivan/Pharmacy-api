@@ -83,12 +83,6 @@ app.use(responseDefaultPath, responseRouter);
 
 app.use(express.static(resolve(process.cwd(), 'static')));
 
-app.use((req, res, next) => {
-  if (req.method === 'GET' && req.accepts('html')) {
-    res.sendFile(resolve(process.cwd(), 'static', 'index.html'));
-  } else {
-    next();
-  }
+app.get('*', (req, res) => {
+  res.sendFile(resolve(process.cwd(), 'static', 'index.html'));
 });
-
-// Інші маршрути або middleware
